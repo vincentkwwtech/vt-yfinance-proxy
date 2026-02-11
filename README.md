@@ -38,6 +38,12 @@ bash scripts/install_systemd.sh
 - `USER_NAME`、`GROUP_NAME`（默认当前用户）
 - `PYTHON_BIN`（默认 python3）
 - `VENV_DIR`（默认 .venv）
+- `LOG_DIR`（默认 /var/log/vt-yfinance-proxy）
+- `LOG_FILE`（默认 /var/log/vt-yfinance-proxy/app.log）
+
+日志保留策略：
+- systemd 输出写入 `LOG_FILE`
+- logrotate 每天轮转，仅保留 1 天
 
 ## API 示例
 - `GET /health`

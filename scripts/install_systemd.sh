@@ -9,6 +9,8 @@ PORT="${PORT:-8000}"
 USER_NAME="${USER_NAME:-$USER}"
 GROUP_NAME="${GROUP_NAME:-$USER}"
 VENV_DIR="${VENV_DIR:-${APP_DIR}/.venv}"
+LOG_DIR="${LOG_DIR:-/var/log/vt-yfinance-proxy}"
+LOG_FILE="${LOG_FILE:-${LOG_DIR}/app.log}"
 
 if [[ ! -x "${PYTHON_BIN}" ]]; then
   echo "Python not found: ${PYTHON_BIN}" >&2
@@ -23,6 +25,10 @@ fi
 "${VENV_DIR}/bin/python" -m pip install -e "${APP_DIR}"
 
 SERVICE_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
+LOGROTATE_PATH="/etc/logrotate.d/${SERVICE_NAME}"
+
+sudo mkdir -p "${LOG_DIR}"
+sudo chown "${USER_NAME}:${GROUP_NAME}" "${LOG_DIR}"
 
 echo "Creating systemd service at ${SERVICE_PATH}"
 
@@ -38,11 +44,25 @@ Group=${GROUP_NAME}
 WorkingDirectory=${APP_DIR}
 Environment=PYTHONUNBUFFERED=1
 ExecStart=${VENV_DIR}/bin/uvicorn app.main:app --host ${HOST} --port ${PORT}
+StandardOutput=append:${LOG_FILE}
+StandardError=append:${LOG_FILE}
 Restart=always
 RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
+EOF
+
+echo "Configuring logrotate at ${LOGROTATE_PATH}"
+sudo tee "${LOGROTATE_PATH}" > /dev/null <<EOF
+${LOG_FILE} {
+  daily
+  rotate 1
+  maxage 1
+  missingok
+  notifempty
+  copytruncate
+}
 EOF
 
 sudo systemctl daemon-reload
