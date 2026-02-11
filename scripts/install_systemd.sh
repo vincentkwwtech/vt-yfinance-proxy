@@ -12,13 +12,19 @@ VENV_DIR="${VENV_DIR:-${APP_DIR}/.venv}"
 LOG_DIR="${LOG_DIR:-/var/log/vt-yfinance-proxy}"
 LOG_FILE="${LOG_FILE:-${LOG_DIR}/app.log}"
 
-if [[ ! -x "${PYTHON_BIN}" ]]; then
+if [[ -x "${PYTHON_BIN}" ]]; then
+  RESOLVED_PYTHON_BIN="${PYTHON_BIN}"
+else
+  RESOLVED_PYTHON_BIN="$(command -v "${PYTHON_BIN}" || true)"
+fi
+
+if [[ -z "${RESOLVED_PYTHON_BIN}" ]]; then
   echo "Python not found: ${PYTHON_BIN}" >&2
   exit 1
 fi
 
 if [[ ! -d "${VENV_DIR}" ]]; then
-  "${PYTHON_BIN}" -m venv "${VENV_DIR}"
+  "${RESOLVED_PYTHON_BIN}" -m venv "${VENV_DIR}"
 fi
 
 "${VENV_DIR}/bin/python" -m pip install -U pip
