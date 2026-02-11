@@ -19,6 +19,14 @@ else
 fi
 
 if [[ -z "${RESOLVED_PYTHON_BIN}" ]]; then
+  if [[ -x "/usr/bin/python3" ]]; then
+    RESOLVED_PYTHON_BIN="/usr/bin/python3"
+  elif [[ -x "/usr/bin/python" ]]; then
+    RESOLVED_PYTHON_BIN="/usr/bin/python"
+  fi
+fi
+
+if [[ -z "${RESOLVED_PYTHON_BIN}" ]]; then
   echo "Python not found: ${PYTHON_BIN}" >&2
   exit 1
 fi
