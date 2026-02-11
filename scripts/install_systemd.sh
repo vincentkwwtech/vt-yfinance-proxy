@@ -4,7 +4,7 @@ set -euo pipefail
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SERVICE_NAME="vt-yfinance-proxy"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-HOST="${HOST:-0.0.0.0}"
+HOST="${HOST:-10.175.127.13}"
 PORT="${PORT:-8000}"
 USER_NAME="${USER_NAME:-$USER}"
 GROUP_NAME="${GROUP_NAME:-$USER}"
