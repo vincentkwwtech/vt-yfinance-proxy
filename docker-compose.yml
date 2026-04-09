@@ -1,0 +1,21 @@
+services:
+  vt-yfinance-proxy:
+    build: .
+    container_name: vt-yfinance-proxy
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - YFINANCE_PROXY=${YFINANCE_PROXY:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

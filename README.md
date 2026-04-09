@@ -168,12 +168,27 @@ python main.py
 
 ### 生产环境部署
 
-**方式一：Systemd 部署（推荐）**
+**方式一：Systemd 部署**
 ```bash
 ./deploy-systemd.sh
 ```
 
-**方式二：Docker 部署**
+**方式二：Docker Compose 部署（推荐）**
+```bash
+# 可选：创建 .env 文件配置代理等
+cp .env.example .env
+
+# 启动服务
+docker compose up -d
+
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+```
+
+**方式三：Docker 单容器部署**
 ```bash
 ./deploy-docker.sh
 ```

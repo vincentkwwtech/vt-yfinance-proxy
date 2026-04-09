@@ -13,7 +13,14 @@ python main.py
 ./deploy-systemd.sh
 ```
 
-## Docker 部署
+## Docker Compose 部署（推荐）
+
+```bash
+cp .env.example .env   # 按需编辑
+docker compose up -d
+```
+
+## Docker 单容器部署
 
 ```bash
 ./deploy-docker.sh
