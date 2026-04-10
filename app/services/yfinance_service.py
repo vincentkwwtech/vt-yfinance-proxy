@@ -19,10 +19,16 @@ class YFinanceError(Exception):
 
 
 def _get_proxy() -> str | None:
-    use_proxy = os.getenv("USE_PROXY", "false").lower() in ("true", "1", "yes")
-    if not use_proxy:
+    proxy = os.getenv("YFINANCE_PROXY")
+    if not proxy:
         return None
-    return os.getenv("YFINANCE_PROXY")
+
+    # If USE_PROXY is unset, use YFINANCE_PROXY directly.
+    # If USE_PROXY is set, treat it as an explicit switch.
+    use_proxy = os.getenv("USE_PROXY")
+    if use_proxy is None:
+        return proxy
+    return proxy if use_proxy.lower() in ("true", "1", "yes") else None
 
 
 def _to_date(value: Optional[date]) -> Optional[str]:

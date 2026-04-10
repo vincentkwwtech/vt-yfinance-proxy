@@ -12,10 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 def _get_proxy() -> Optional[str]:
-    use_proxy = os.getenv("USE_PROXY", "false").lower() in ("true", "1", "yes")
-    if not use_proxy:
+    proxy = os.getenv("YFINANCE_PROXY")
+    if not proxy:
         return None
-    return os.getenv("YFINANCE_PROXY")
+
+    # Backward compatible behavior:
+    # - If USE_PROXY is unset, a configured YFINANCE_PROXY is used (matches docs).
+    # - If USE_PROXY is explicitly set, it acts as an on/off switch.
+    use_proxy = os.getenv("USE_PROXY")
+    if use_proxy is None:
+        return proxy
+    return proxy if use_proxy.lower() in ("true", "1", "yes") else None
 
 
 def _get_ticker(symbol: str) -> yf.Ticker:
@@ -331,13 +338,11 @@ def get_kline(
         if not info or (not info.get("shortName") and not info.get("longName")):
             raise InvalidTickerError(f"Invalid ticker symbol: {symbol}")
 
-        proxy = _get_proxy()
         history = ticker.history(
             period=period,
             interval=interval,
             prepost=prepost,
             auto_adjust=False,
-            proxy=proxy,
         )
     except InvalidTickerError:
         raise
