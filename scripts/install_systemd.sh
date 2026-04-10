@@ -11,6 +11,8 @@ GROUP_NAME="${GROUP_NAME:-$USER}"
 VENV_DIR="${VENV_DIR:-${APP_DIR}/.venv}"
 LOG_DIR="${LOG_DIR:-/var/log/vt-yfinance-proxy}"
 LOG_FILE="${LOG_FILE:-${LOG_DIR}/app.log}"
+USE_PROXY="${USE_PROXY:-false}"
+YFINANCE_PROXY="${YFINANCE_PROXY:-}"
 
 if [[ -x "${PYTHON_BIN}" ]]; then
   RESOLVED_PYTHON_BIN="${PYTHON_BIN}"
@@ -57,6 +59,8 @@ User=${USER_NAME}
 Group=${GROUP_NAME}
 WorkingDirectory=${APP_DIR}
 Environment=PYTHONUNBUFFERED=1
+Environment=USE_PROXY=${USE_PROXY}
+Environment=YFINANCE_PROXY=${YFINANCE_PROXY}
 ExecStart=${VENV_DIR}/bin/uvicorn app.main:app --host ${HOST} --port ${PORT}
 StandardOutput=append:${LOG_FILE}
 StandardError=append:${LOG_FILE}

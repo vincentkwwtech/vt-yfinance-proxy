@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 def _get_proxy() -> Optional[str]:
+    use_proxy = os.getenv("USE_PROXY", "false").lower() in ("true", "1", "yes")
+    if not use_proxy:
+        return None
     return os.getenv("YFINANCE_PROXY")
 
 

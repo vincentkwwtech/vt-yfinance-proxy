@@ -11,6 +11,7 @@ GROUP_NAME="${GROUP_NAME:-$USER}"
 VENV_DIR="${VENV_DIR:-${APP_DIR}/.venv}"
 LOG_DIR="${LOG_DIR:-/var/log/vt-yfinance-proxy}"
 LOG_FILE="${LOG_FILE:-${LOG_DIR}/app.log}"
+USE_PROXY="${USE_PROXY:-false}"
 YFINANCE_PROXY="${YFINANCE_PROXY:-}"
 
 # Resolve Python binary
@@ -50,9 +51,10 @@ sudo chown "${USER_NAME}:${GROUP_NAME}" "${LOG_DIR}"
 
 echo "Creating systemd service at ${SERVICE_PATH}"
 
-PROXY_ENV=""
+PROXY_ENV="Environment=USE_PROXY=${USE_PROXY}"
 if [[ -n "${YFINANCE_PROXY}" ]]; then
-  PROXY_ENV="Environment=YFINANCE_PROXY=${YFINANCE_PROXY}"
+  PROXY_ENV="${PROXY_ENV}
+Environment=YFINANCE_PROXY=${YFINANCE_PROXY}"
 fi
 
 sudo tee "${SERVICE_PATH}" > /dev/null <<EOF

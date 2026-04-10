@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 import logging
+import os
 from typing import Optional
 
 import pandas as pd
@@ -17,6 +18,13 @@ class YFinanceError(Exception):
     pass
 
 
+def _get_proxy() -> str | None:
+    use_proxy = os.getenv("USE_PROXY", "false").lower() in ("true", "1", "yes")
+    if not use_proxy:
+        return None
+    return os.getenv("YFINANCE_PROXY")
+
+
 def _to_date(value: Optional[date]) -> Optional[str]:
     if value is None:
         return None
@@ -30,6 +38,9 @@ def get_daily_ohlcv(
 ) -> list[Candle]:
     try:
         ticker = yf.Ticker(symbol)
+        proxy = _get_proxy()
+        if proxy:
+            ticker.proxy = proxy
         history = ticker.history(
             interval="1d",
             start=_to_date(start),
@@ -73,6 +84,9 @@ def get_latest_quote(symbol: str) -> QuoteResponse:
     symbol = symbol.upper()
     try:
         ticker = yf.Ticker(symbol)
+        proxy = _get_proxy()
+        if proxy:
+            ticker.proxy = proxy
         fast_info = getattr(ticker, "fast_info", None) or {}
     except Exception as exc:  # pragma: no cover
         raise YFinanceError(f"yfinance request failed: {exc}") from exc

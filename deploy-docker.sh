@@ -6,6 +6,7 @@ IMAGE_NAME="vt-yfinance-proxy"
 CONTAINER_NAME="vt-yfinance-proxy"
 HOST="${HOST:-0.0.0.0}"
 PORT="${PORT:-8000}"
+USE_PROXY="${USE_PROXY:-false}"
 YFINANCE_PROXY="${YFINANCE_PROXY:-}"
 
 echo "Building Docker image: ${IMAGE_NAME}"
@@ -28,6 +29,7 @@ DOCKER_ARGS=(
   --restart unless-stopped
   -e "HOST=${HOST}"
   -e "PORT=8000"
+  -e "USE_PROXY=${USE_PROXY}"
 )
 
 if [[ -n "${YFINANCE_PROXY}" ]]; then

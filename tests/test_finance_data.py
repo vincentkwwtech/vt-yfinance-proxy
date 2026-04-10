@@ -371,12 +371,12 @@ class TestAllEndpoint:
 
 
 class TestProxyConfig:
-    @patch.dict("os.environ", {"YFINANCE_PROXY": "http://myproxy:8080"})
-    def test_proxy_env_read(self):
+    @patch.dict("os.environ", {"USE_PROXY": "true", "YFINANCE_PROXY": "http://myproxy:8080"})
+    def test_proxy_enabled(self):
         from app.services.finance_data_service import _get_proxy
         assert _get_proxy() == "http://myproxy:8080"
 
-    @patch.dict("os.environ", {}, clear=True)
-    def test_no_proxy(self):
+    @patch.dict("os.environ", {"USE_PROXY": "false", "YFINANCE_PROXY": "http://myproxy:8080"})
+    def test_proxy_disabled(self):
         from app.services.finance_data_service import _get_proxy
         assert _get_proxy() is None
